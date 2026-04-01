@@ -402,3 +402,365 @@ This backend system demonstrates:
 The project is structured to be readable, maintainable, and aligned with backend development standards expected in real-world systems.
 
 ---
+
+##Additional API Documentation
+# API Documentation (Role-Based Endpoints)
+
+## Base URL
+
+http://localhost:8080
+
+---
+
+# 1. Add User (Register)
+
+### Endpoint
+
+POST /auth/register
+
+### Full URL
+
+http://localhost:8080/auth/register
+
+### Description
+
+Creates a new user in the system with default role VIEWER.
+
+### Request Type
+
+POST
+
+### Request Body (JSON)
+
+```json
+{
+  "name": "User",
+  "email": "user@test.com",
+  "password": "1234"
+}
+```
+
+### Parameters
+
+| Field    | Type   | Required | Description   |
+| -------- | ------ | -------- | ------------- |
+| name     | String | Yes      | Name of user  |
+| email    | String | Yes      | Unique email  |
+| password | String | Yes      | User password |
+
+### Response
+
+200 OK
+User registered successfully
+
+---
+
+# 2. Login (Get Token)
+
+### Endpoint
+
+POST /auth/login
+
+### Full URL
+
+http://localhost:8080/auth/login
+
+### Description
+
+Authenticates user and returns JWT token.
+
+### Request Type
+
+POST
+
+### Request Body
+
+```json
+{
+  "email": "user@test.com",
+  "password": "1234"
+}
+```
+
+### Parameters
+
+| Field    | Type   | Required | Description   |
+| -------- | ------ | -------- | ------------- |
+| email    | String | Yes      | User email    |
+| password | String | Yes      | User password |
+
+### Response
+
+```json
+{
+  "token": "JWT_TOKEN"
+}
+```
+
+---
+
+# ADMIN APIs
+
+---
+
+## 3. Create Record
+
+### Endpoint
+
+POST /records
+
+### Full URL
+
+http://localhost:8080/records
+
+### Description
+
+Creates a financial record.
+
+### Access
+
+ADMIN: Yes
+ANALYST: No
+VIEWER: No
+
+### Headers
+
+Authorization: Bearer JWT_TOKEN
+
+### Request Body
+
+```json
+{
+  "amount": 5000,
+  "type": "INCOME",
+  "category": "Salary",
+  "date": "2026-04-01T00:00:00.000+00:00",
+  "description": "Monthly salary"
+}
+```
+
+### Parameters
+
+| Field       | Type   | Required | Description             |
+| ----------- | ------ | -------- | ----------------------- |
+| amount      | Double | Yes      | Amount must be positive |
+| type        | String | Yes      | INCOME or EXPENSE       |
+| category    | String | Yes      | Category name           |
+| date        | Date   | Yes      | ISO format date         |
+| description | String | No       | Additional info         |
+
+---
+
+## 4. Get Records
+
+### Endpoint
+
+GET /records
+
+### Full URL
+
+http://localhost:8080/records
+
+### Description
+
+Fetch all financial records.
+
+### Access
+
+ADMIN: Yes
+ANALYST: Yes
+VIEWER: No
+
+### Headers
+
+Authorization: Bearer JWT_TOKEN
+
+---
+
+## 5. Get Users
+
+### Endpoint
+
+GET /users
+
+### Full URL
+
+http://localhost:8080/users
+
+### Description
+
+Fetch all users.
+
+### Access
+
+ADMIN: Yes
+ANALYST: No
+VIEWER: No
+
+### Headers
+
+Authorization: Bearer JWT_TOKEN
+
+---
+
+## 6. Dashboard
+
+### Endpoint
+
+GET /dashboard
+
+### Full URL
+
+http://localhost:8080/dashboard
+
+### Description
+
+Returns aggregated financial summary.
+
+### Access
+
+ADMIN: Yes
+ANALYST: Yes
+VIEWER: Yes
+
+### Headers
+
+Authorization: Bearer JWT_TOKEN
+
+---
+
+# ANALYST APIs
+
+---
+
+## 7. Get Records
+
+### Endpoint
+
+GET /records
+
+### Access
+
+ANALYST: Yes
+
+---
+
+## 8. Get Users
+
+### Endpoint
+
+GET /users
+
+### Access
+
+ANALYST: No (403 Forbidden)
+
+---
+
+## 9. Dashboard
+
+### Endpoint
+
+GET /dashboard
+
+### Access
+
+ANALYST: Yes
+
+---
+
+# 👀 VIEWER APIs
+
+---
+
+## 10. Dashboard
+
+### Endpoint
+
+GET /dashboard
+
+### Access
+
+VIEWER: Yes
+
+---
+
+## 11. Get Records
+
+### Endpoint
+
+GET /records
+
+### Access
+
+VIEWER: No
+
+---
+
+## 12. Create Record
+
+### Endpoint
+
+POST /records
+
+### Access
+
+VIEWER: No
+
+---
+
+# Additional Filter APIs
+
+---
+
+## Filter by Type
+
+### Endpoint
+
+GET /records/type/{type}
+
+### Example
+
+http://localhost:8080/records/type/INCOME
+
+---
+
+## Filter by Category
+
+### Endpoint
+
+GET /records/category/{category}
+
+### Example
+
+http://localhost:8080/records/category/Salary
+
+---
+
+# Authentication Header Format
+
+```text
+Authorization: Bearer <JWT_TOKEN>
+```
+
+---
+
+# Error Responses
+
+| Code | Meaning      |
+| ---- | ------------ |
+| 400  | Bad Request  |
+| 403  | Forbidden    |
+| 500  | Server Error |
+
+---
+
+# Summary
+
+* All protected APIs require JWT token
+* Roles control access strictly
+* Validation ensures data correctness
+* System follows REST principles
+
+---
+
